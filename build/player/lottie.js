@@ -17007,7 +17007,17 @@
       var velocityAtTime;
       var scoped_bm_rt; // val = val.replace(/(\\?"|')((http)(s)?(:\/))?\/.*?(\\?"|')/g, "\"\""); // deter potential network calls
 
-      var expression_function = eval('[function _expression_function(){' + val + ';scoped_bm_rt=$bm_rt}]')[0]; // eslint-disable-line no-eval
+      // var expression_function = eval('[function _expression_function(){' + val + ';scoped_bm_rt=$bm_rt}]')[0]; // eslint-disable-line no-eval
+
+      // Updated the above expression function to not use `eval` which can cause security and minification issues
+      function expression_function(val) {
+          function _expression_function() {
+            var func = new Function(val);
+            func();
+            scoped_bm_rt = $bm_rt;
+          }
+          return _expression_function;
+        }
 
       var numKeys = property.kf ? data.k.length : 0;
       var active = !this.data || this.data.hd !== true;
